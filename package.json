@@ -34,6 +34,7 @@
     "file-saver": "^2.0.5",
     "floating-vue": "^5.2.2",
     "font-awesome": "^4.7.0",
+    "html2pdf.js": "^0.10.2",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "multi-range-slider-vue": "^1.1.4",

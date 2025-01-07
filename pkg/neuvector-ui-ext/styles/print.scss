@@ -1,0 +1,138 @@
+@import './common/color.scss';
+
+.printable-area {
+    visibility: visible;
+    position: relative;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    height: auto;
+}
+
+.page-cover {
+    background-image: url('~@/pkg/neuvector-ui-ext/assets/img/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    -webkit-print-color-adjust: exact;
+    height: 700px;
+    position: relative;
+    page-break-after: always;
+
+    .page-cover-decro {
+        background-image: url('~@/pkg/neuvector-ui-ext/assets/img/abstract.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        -webkit-print-color-adjust: exact;
+        height: 500px;
+        width: 700px;
+        position: absolute;
+        left: 30px;
+        top: 30px;
+        z-index: 10;
+    }
+    .page-cover-logo {
+        background-image: url('~@/pkg/neuvector-ui-ext/assets/img/logo-with-text.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        -webkit-print-color-adjust: exact;
+        height: 100px;
+        width: 400px;
+        position: absolute;
+        right: 30px;
+        top: 200px;
+        z-index: 20;
+    }
+    .page-cover-title {
+        color: #666;
+        font-size: 50px;
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.report-summary {
+    page-break-after: always;
+    .summary-title {
+        color: $neuvector-dark-green-800;
+        font-size: 30px;
+        font-weight: bolder;
+        margin: 10px 0;
+    }
+    .summary-subtitle {
+        font-size: 20px;
+        font-weight: bolder;
+    }
+    .statistic-row {
+        font-size: 20px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .statistic-row:nth-child(even) {
+        background: $neuvector-dark-green-200;
+        -webkit-print-color-adjust: exact;
+    }
+    .statistic-row:nth-child(odd) {
+        background: $neuvector-dark-green-100;
+        -webkit-print-color-adjust: exact;
+    }
+    .statistic-cell {
+        padding: 5px 15px;
+        border: 3px solid #fff;
+    }
+}
+
+.print-table {
+    border: 1px solid $neuvector-grey-400;
+    display: table;
+    width: 980px;
+    page-break-after: auto;
+    table-layout: fixed;
+}
+
+.print-header {
+    background-color: $neuvector-grey-100;
+    -webkit-print-color-adjust: exact;
+}
+
+.print-header,
+.print-row {
+    border-bottom: 1px solid $neuvector-grey-400;
+    font-size: 10px;
+    page-break-inside: avoid;
+    page-break-after: auto;
+    display: table-row;
+}
+
+.print-cell {
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 5px;
+    padding-right: 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.print-cell:not(:last-child) {
+    border-right: 1px dashed $neuvector-grey-400;
+}
+
+.margin-top-m {
+    margin-top: 16px; }
+
+.margin-bottom-m {
+    margin-bottom: 16px; }
+
+.margin-left-l {
+    margin-left: 24px; }
+
+.margin-top-xxxl {
+    margin-top: 64px; }
+
+.margin-right-xl {
+    margin-right: 32px; }

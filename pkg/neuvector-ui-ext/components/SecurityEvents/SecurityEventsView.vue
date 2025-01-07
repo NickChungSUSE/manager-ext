@@ -10,9 +10,7 @@
     import TimeSlider from './timeSlider/TimeSlider';
     import { prepareContext4TwoWayInfinityScroll, filterSecEvents } from '../../utils/security-events';
     import { vTooltip } from 'floating-vue';
-    // import { library } from '@fortawesome/fontawesome';
     import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-    // import { faSomeIcon } from '@fortawesome/fontawesome-free-regular'; 
     import BriefInfo from './contents/BriefInfo';
     import Details from './contents/Details';
     import Packet from './dialogs/Packet';
@@ -22,6 +20,8 @@
     import DownloadCsv from  './buttons/DownloadCsv';
     import Refresh from '../common/buttons/Refresh';
     import Loading from '@shell/components/Loading';
+    import PrintableReport from './reports/PrintableReport.vue';
+    import html2pdf from 'html2pdf.js';
 
     // library.add(faSomeIcon);
 
@@ -40,7 +40,8 @@
             EnforcerInfo,
             DownloadCsv,
             Refresh,
-            Loading
+            Loading,
+            PrintableReport
         },
         async fetch() {
             if ( this.$store.getters['cluster/canList'](SERVICE) ) {
@@ -71,7 +72,8 @@
                 workload: null,
                 showEnforcerInfoModal: null,
                 enforcer: null,
-                showAdvFilterModal: null
+                showAdvFilterModal: null,
+                isPrintable: false
             };
         },
         props: {
@@ -136,6 +138,31 @@
             },
             closeAdvFilterModal: function() {
                 this.showAdvFilterModal.value = false;
+            },
+            exportPdf: function() {
+                this.isPrintable = true; // Ensure printable content is visible
+                this.$nextTick(() => {
+                    const element = document.querySelector('.printable-area'); // Target printable area
+                    
+                    console.log('Printable Area Content:', element.innerHTML);
+                    const options = {
+                        margin: .4,
+                        filename: 'Security_Events_Report.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2 },
+                        jsPDF: { unit: 'in', format: 'A4', orientation: 'landscape' }
+                    };
+
+                    // Generate the PDF and open it in a new tab
+                    html2pdf().set(options).from(element).outputPdf('datauristring').then((pdfDataUri) => {
+                        const pdfWindow = window.open(); // Open a new tab
+                        pdfWindow.document.write(`<iframe width="100%" height="100%" src="${pdfDataUri}"></iframe>`); // Embed the PDF
+                        this.isPrintable = false; // Reset printable state
+                    }).catch(error => {
+                        console.error('Error generating PDF preview:', error);
+                        this.isPrintable = false;
+                    });
+                });
             }
         },
         computed: {
@@ -199,6 +226,9 @@
 
 <template>
     <Loading v-if="$fetchState.pending" />
+    <div v-else-if="isPrintable" class="printable-area">
+            <PrintableReport />
+        </div>
     <div v-else class="screen-area">
         <div id="sec-event" class="padding-top-0">
             <header style="margin-bottom: 10px;" id="security-events-title">
@@ -209,6 +239,14 @@
                     <div class="pull-right" style="margin-left: 8px;">
                         <Refresh :reloadData="loadData"/>
                     </div>
+                    <button
+                        mat-button
+                        class="btn role-secondary"
+                        aria-label="Export secutiry events reports CSV"
+                        type="button"
+                        @click="exportPdf()">
+                        PDF
+                    </button>
                     <div class="pull-right"
                         v-if="processedSecEvents.cachedSecurityEvents && processedSecEvents.cachedSecurityEvents.length > 0">
                         <DownloadCsv />
@@ -303,55 +341,6 @@
 <style lang="scss" scoped>
     @import '../../styles/security-events.scss';
     @import '../../styles/neuvector.scss';
+    @import '../../styles/print.scss';
 
-    @media print {
-    @page {
-        size: landscape;
-        @bottom-right {
-        content: counter(page) ' of ' counter(pages);
-        }
-    }
-    .screen-area,
-    #__layout nav,
-    #__layout header {
-        display: none;
-        width: 0;
-        height: 0;
-    }
-    // #__layout main {
-    //   margin-top: 0;
-    //   margin-bottom: 0;
-    //   margin-left: 0;
-    //   border: none;
-    // }
-    // .nv-section {
-    //   border-top: none;
-    //   padding-top: 4px;
-    //   padding-bottom: 0;
-    //   padding-left: 0;
-    //   padding-right: 0;
-    // }
-    .printable-area {
-        visibility: visible;
-        position: absolute;
-        top: 0;
-        left: 0;
-        overflow-y: auto;
-        height: auto;
-        width: 1000px;
-    }
-    .pagebreak {
-        clear: both;
-        page-break-after: always;
-    }
-    }
-    @media screen {
-    .printable-area {
-        visibility: hidden;
-        position: absolute;
-        height: 0;
-        overflow: hidden;
-        width: 1000px;
-    }
-    }
 </style>
